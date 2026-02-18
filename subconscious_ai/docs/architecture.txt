@@ -1,0 +1,21 @@
+Subconscious AI Edge Architecture
+
+[Capture Layer]
+keyboard/mouse (default on), audio/webcam (default off)
+  -> in-memory event queue (no raw text persisted)
+
+[Feature Layer]
+SlidingWindowAggregator computes 3s + 7s engineered features
+  -> normalized float32 vector (N=18)
+
+[Inference Layer]
+GRU(64 hidden, 1 layer) over recent 16 steps (0.5s cadence)
+  -> action probabilities over {switch_app, open_browser, start_typing, click, idle}
+  -> early-exit heuristic for cheap idle prediction
+
+[Explainability Layer]
+Occlusion over feature dimensions; return top-3 impacts + rationale text
+
+[System Layer]
+AdaptiveThrottler monitors CPU and lowers sampling scales when CPU > threshold
+Monitor prints CPU/RAM and latency benchmark scripts output CSV-style stats.
